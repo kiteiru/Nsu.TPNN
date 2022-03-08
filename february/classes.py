@@ -3,30 +3,59 @@ import csv
 from math import nan, log
 
 
-def CountInfoX(list, T, infoXList, existingClasses):
+def CountInfoXAndSplitX(list, T, existingClasses, infoX, splitInfoX):
     uniqueElems = {}
-    inClasses = {}
-    splitInfoX = []
+    infoForInfoX =[]
+    lastExisting = copy.deepcopy(existingClasses)
 
     # for j in range(len(list[0])):
     for j in range(0, 1):
-        whetherInClass = copy.deepcopy(existingClasses)
+        whetherInClass = {}
         # for i in range(1, len(list)):
         for i in range(1, len(list)):
-            idx = int(list[i][j])
+            idx = list[i][j]
             if idx not in uniqueElems:
                 uniqueElems[idx] = 1
             else:
                 uniqueElems[idx] += 1
 
-            for key in whetherInClass:
-                if i in whetherInClass[key]:
-                    if key not in inClasses:
-                        inClasses[key] = 1
-                    else:
-                        inClasses[key] += 1
+            if idx not in whetherInClass:
+                whetherInClass[idx] = {}
+                for key in lastExisting:
+                    if i in lastExisting[key]:
+                        if key not in whetherInClass[idx]:
+                            whetherInClass[idx][key] = 1
+                        else:
+                            whetherInClass[idx][key] += 1
+                        lastExisting[key].remove(i)
+                        break
+            else:
+                for key in lastExisting:
+                    if i in lastExisting[key]:
+                        if key not in whetherInClass[idx]:
+                            whetherInClass[idx][key] = 1
+                        else:
+                            whetherInClass[idx][key] += 1
+                        lastExisting[key].remove(i)
+                        break
+        info = 0
+        infoPerClass = []
+        sum = 0
+        for key in whetherInClass:
+            for key2 in whetherInClass[key]:
+                sum += (whetherInClass[key][key2] / uniqueElems[key])
+            infoPerClass.append(sum * -1)
+        information = 0
+        iter = 0
+        for key in uniqueElems:
+            division = uniqueElems[key] / T
+            information += division * infoPerClass[iter]
+            iter += 1
+        infoX.append(round(information, 3))
 
-                    whetherInClass[key].remove(i)
+        print("\ninfoX")
+        print(infoX)
+
         print("\nunique elems")
         print(uniqueElems)
         split = 0
@@ -35,6 +64,8 @@ def CountInfoX(list, T, infoXList, existingClasses):
             split += division * log(division, 2)
         split *= -1
         splitInfoX.append(round(split, 3))
+        print("\nsplitX")
+        print(splitInfoX)
 
         '''for key in whetherInClass:
             for k in range(len(whetherInClass[key])):'''
@@ -42,13 +73,9 @@ def CountInfoX(list, T, infoXList, existingClasses):
     print("\n\nexist")
     print(existingClasses)
 
-    print("\nsplit")
-    print(splitInfoX)
-
     print("\n\nwhether")
     print(whetherInClass)
-    print("\ninclasses")
-    print(inClasses)
+
 
 
 def CountInfo(existingClasses, T):
@@ -63,9 +90,10 @@ def CountInfo(existingClasses, T):
 def CountGainRatio(existingClasses, T, list):
     gainRatio = 0
     info = CountInfo(existingClasses, T)
-    infoXList = []
-    infoX = CountInfoX(list, T, infoXList, existingClasses)
-    splitInfo = 0
+    infoX = []
+    splitInfoX = []
+    CountInfoXAndSplitX(list, T, existingClasses, infoX, splitInfoX)
+
 
     return gainRatio
 
