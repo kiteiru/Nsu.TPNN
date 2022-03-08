@@ -2,23 +2,32 @@ import copy
 import csv
 from math import nan, log
 
+def CountInfo(existingClasses, T):
+    sum = 0
+    for key in existingClasses:
+        freq = len(existingClasses[key])
+        freqDivideT = freq / T
+        sum += (freqDivideT * log(freqDivideT, 2))
+    return -1 * sum
 
-def CountInfoXAndSplitX(list, T, existingClasses, infoX, splitInfoX):
-    uniqueElems = {}
-    infoForInfoX =[]
-    lastExisting = copy.deepcopy(existingClasses)
+def CountGainRatio(existingClasses, T, list, gainRatio):
+    infoX = []
+    splitInfoX = []
+    info = CountInfo(existingClasses, T)
 
-    # for j in range(len(list[0])):
-    for j in range(0, 1):
+    for j in range(len(list[0]) - 2):
+        uniqueElems = {}
+        lastExisting = copy.deepcopy(existingClasses)
         whetherInClass = {}
-        # for i in range(1, len(list)):
         for i in range(1, len(list)):
             idx = list[i][j]
-            if idx not in uniqueElems:
+            if idx not in uniqueElems:  # counting repeats of each unique element in dataset column
                 uniqueElems[idx] = 1
             else:
                 uniqueElems[idx] += 1
 
+            # for each example, having value of unique element from certain column,
+            # check whether its in some class
             if idx not in whetherInClass:
                 whetherInClass[idx] = {}
                 for key in lastExisting:
@@ -38,64 +47,32 @@ def CountInfoXAndSplitX(list, T, existingClasses, infoX, splitInfoX):
                             whetherInClass[idx][key] += 1
                         lastExisting[key].remove(i)
                         break
-        info = 0
-        infoPerClass = []
-        sum = 0
-        for key in whetherInClass:
-            for key2 in whetherInClass[key]:
-                sum += (whetherInClass[key][key2] / uniqueElems[key])
-            infoPerClass.append(sum * -1)
+
         information = 0
-        iter = 0
-        for key in uniqueElems:
-            division = uniqueElems[key] / T
-            information += division * infoPerClass[iter]
-            iter += 1
-        infoX.append(round(information, 3))
-
-        print("\ninfoX")
-        print(infoX)
-
-        print("\nunique elems")
-        print(uniqueElems)
         split = 0
         for key in uniqueElems:
+            sum = 0
             division = uniqueElems[key] / T
             split += division * log(division, 2)
-        split *= -1
-        splitInfoX.append(round(split, 3))
-        print("\nsplitX")
-        print(splitInfoX)
+            for key2 in whetherInClass[key]:
+                division2 = whetherInClass[key][key2] / uniqueElems[key]
+                sum += (division2 * log(division2, 2))
+            information += (uniqueElems[key] * sum)
 
-        '''for key in whetherInClass:
-            for k in range(len(whetherInClass[key])):'''
+        infoX.append(round(information / -T, 3))
+        splitInfoX.append(round(-split, 3))
+        gain = (info - infoX[j]) / splitInfoX[j]
+        gainRatio.append(round(gain, 3))
 
-    print("\n\nexist")
-    print(existingClasses)
-
-    print("\n\nwhether")
-    print(whetherInClass)
-
+        '''print("\nunique elems")
+        print(uniqueElems)
 
 
-def CountInfo(existingClasses, T):
-    sum = 0
-    for key in existingClasses:
-        freq = len(existingClasses[key])
-        freqDivideT = freq / T
-        sum += (freqDivideT * log(freqDivideT, 2))
-    return -1 * sum
-
-
-def CountGainRatio(existingClasses, T, list):
-    gainRatio = 0
-    info = CountInfo(existingClasses, T)
-    infoX = []
-    splitInfoX = []
-    CountInfoXAndSplitX(list, T, existingClasses, infoX, splitInfoX)
-
-
-    return gainRatio
+        print("\n\nwhether" + " " + str(list[0][j]))
+        print(whetherInClass)
+        
+        print("\n\nexist")
+        print(existingClasses)'''
 
 
 def SeparateOnClasses(list):
@@ -211,7 +188,10 @@ def SeparateOnClasses(list):
     print(existingClasses)'''
 
     T = len(target) - 1
-    gainRatio = CountGainRatio(existingClasses, T, list)
+    gainRatio = []
+
+    CountGainRatio(existingClasses, T, list, gainRatio)
+    print(gainRatio)
 
     with open("csvFiles/target.csv", "w+") as file:
         fileWriter = csv.writer(file)

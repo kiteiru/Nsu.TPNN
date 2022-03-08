@@ -5,7 +5,18 @@ from corrMat import CountCorrMat
 from classes import SeparateOnClasses
 from plots import CreateHistogram, CreateHeatmap
 
-
+def FillEmptyCells():
+    for i in range(listSize):
+        rowSize = len(list[i])
+        for j in range(rowSize - 1):
+            if list[i][j] == "-" or list[i][j] == "" or list[i][j] == "не спускался":
+                list[i][j] = nan
+            if list[i][j] is not nan:
+                if "," in list[i][j]:
+                    list[i][j] = list[i][j].replace(",", ".")
+        JoinKGF(list, rowSize, i)
+        list[i].pop()
+#
 def JoinKGF(list, rowSize, i):
     if list[i][rowSize - 1] != "-" and list[i][rowSize - 1] != "" and i > 2:
         list[i][rowSize - 1] = list[i][rowSize - 1].replace(",", ".")
@@ -25,20 +36,9 @@ with open ("csvFiles/ID_data_mass_18122012.csv", "r") as file:
             list.append(row)
         idx += 1
 
-count = 0
 listSize = len(list)
 
-for i in range(listSize):
-    rowSize = len(list[i])
-    for j in range(rowSize - 1):
-        if list[i][j] == "-" or list[i][j] == "" or list[i][j] == "не спускался":
-            list[i][j] = nan
-            count += 1
-        if list[i][j] is not nan:
-            if "," in list[i][j]:
-                list[i][j] = list[i][j].replace(",", ".")
-    JoinKGF(list, rowSize, i)
-    list[i].pop()
+FillEmptyCells()
 
 rowSize = len(list[0])
 for i in range(rowSize):
@@ -54,7 +54,7 @@ for j in range(2, rowSize):
     columns.append(list[0][j])
 
 CountCorrMat(list)
-#CreateHeatmap(columns)
+CreateHeatmap(columns)
 FeaturesMatrix(list)
 SeparateOnClasses(list)
 #CreateHistogram(list)
