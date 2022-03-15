@@ -3,7 +3,7 @@ from math import nan
 from features import FeaturesMatrix
 from corrMat import CountCorrMat
 from classes import SeparateOnClasses
-from plots import CreateHistogram, CreateHeatmap
+from plots import CreateHeatmap
 
 def FillEmptyCells():
     for i in range(listSize):
@@ -57,7 +57,6 @@ CountCorrMat(list)
 CreateHeatmap(columns)
 FeaturesMatrix(list)
 SeparateOnClasses(list)
-#CreateHistogram(list)
 
 with open ("csvFiles/dataset.csv", "w+") as file:
     fileWriter = csv.writer(file)

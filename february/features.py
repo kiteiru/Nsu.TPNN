@@ -1,6 +1,9 @@
 import csv
 from math import nan, sqrt
 
+from plots import CreateDistribution
+
+
 def CountDeviation(average, amount, list):
     sum = 0
     for i in range(len(list)):
@@ -81,8 +84,11 @@ def FeaturesMatrix(list):
         features[11].append(str(round(interquartileRange, 2)))
 
     #print(features)
+    CreateDistribution(features, list)
 
     with open("csvFiles/featMat.csv", "w+") as file:
         fileWriter = csv.writer(file)
         for i in range(len(features)):
             fileWriter.writerow(features[i])
+
+    print(list[0])

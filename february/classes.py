@@ -2,6 +2,9 @@ import copy
 import csv
 from math import nan, log
 
+from plots import CreateDistribution, CreateHistogram
+
+
 def CountInfo(existingClasses, T):
     sum = 0
     for key in existingClasses:
@@ -63,16 +66,6 @@ def CountGainRatio(existingClasses, T, list, gainRatio):
         splitInfoX.append(round(-split, 3))
         gain = (info - infoX[j]) / splitInfoX[j]
         gainRatio.append(round(gain, 3))
-
-        '''print("\nunique elems")
-        print(uniqueElems)
-
-
-        print("\n\nwhether" + " " + str(list[0][j]))
-        print(whetherInClass)
-        
-        print("\n\nexist")
-        print(existingClasses)'''
 
 
 def SeparateOnClasses(list):
@@ -180,20 +173,10 @@ def SeparateOnClasses(list):
             examples.append(i)
             existingClasses[classNum] = examples
 
-    '''print("gtotal: ")
-    print(gTotalIntervals)
-    print("kgf: ")
-    print(kgfIntervals)
-    print("\n\nclasses: ")
-    print(existingClasses)'''
-
     T = len(target) - 1
     gainRatio = []
 
     CountGainRatio(existingClasses, T, list, gainRatio)
-    print(gainRatio)
 
-    with open("csvFiles/target.csv", "w+") as file:
-        fileWriter = csv.writer(file)
-        for i in range(len(target)):
-            fileWriter.writerow(target[i])
+    print(gainRatio)
+    CreateHistogram(gainRatio, list)
