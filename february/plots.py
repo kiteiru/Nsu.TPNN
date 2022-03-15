@@ -13,14 +13,25 @@ def CreateHeatmap(columns):
     plt.yticks(fontsize=10)
     plt.tight_layout()
     plt.show()
-    fig.savefig('plots/heatmap.png', dpi=300)
+    fig.savefig('plots/heatmap.png', dpi=150)
 
-def CreateHistogram(list):
-    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+def CreateDistribution(features, list):
     feature = pd.read_csv('csvFiles/dataset.csv')
-    gTotal = feature[str(list[0][-2])].dropna()
-    kgf = feature[str(list[0][-1])].dropna()
-    sns.histplot(gTotal, bins=4, kde=False, ax=axes[0], color="green")
-    sns.histplot(kgf, bins=10, kde=False, ax=axes[1], color="purple")
+    for j in range(2, len(list[0])):
+        fig = plt.figure(figsize=(12, 12), dpi=80)
+        name = feature[str(list[0][j])].dropna()
+        sns.displot(name, kind="kde")
+        #sns.histplot(name, bins=8, color="green")
+        plt.axvline(x=float(features[5][j - 1]), color='blue', linestyle='dashed', linewidth=2)
+        plt.axvline(x=float(features[6][j - 1]), color='purple', linestyle='dashed', linewidth=2)
+        plt.axvline(x=float(features[7][j - 1]), color='pink', linestyle='dashed', linewidth=2)
+        plt.tight_layout()
+        plt.show()
+        #fig.savefig('plots/' + str(j) + 'Column.png', dpi=150)
+
+def CreateHistogram(gainRatio, list):
+    plt.barh(list[0][:-2], gainRatio)
+    plt.tight_layout()
+    plt.figure(figsize=(36, 18), dpi=80)
     plt.show()
-    #print(df.info())
+
