@@ -17,6 +17,7 @@ def DrawPlots(epochNum, epochErrors, dataset, target, predictions):
     plt.show()
     fig.savefig('plots/error.png', dpi=150)
 
+    fig = plt.figure()
     plt.scatter(dataset, target, s=10, color='#8d4dca')
     plt.scatter(dataset, predictions, s=10, color='#ff9c00')
     plt.legend(["target", "predicted"], bbox_to_anchor=(0, 1, 1, 0), loc="lower center", ncol=2)
